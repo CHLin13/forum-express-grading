@@ -59,6 +59,12 @@ const adminController = {
         req.flash('success_messages', 'restaurant was successfully to update')
         res.redirect('/admin/restaurants')
       })
+  },
+
+  deleteRestaurant: (req, res) => {
+    Restaurant.findByPk(req.params.id)
+      .then(restaurant => restaurant.destroy())
+      .then(() => res.redirect('/admin/restaurants'))
   }
 }
 
