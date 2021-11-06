@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000
 app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'))
 app.use(methodOverride('_method'))
 app.use('/upload', express.static(__dirname + '/upload'))
 app.use(session({
