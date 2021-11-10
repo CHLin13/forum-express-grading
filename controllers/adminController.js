@@ -14,7 +14,8 @@ const adminController = {
   },
 
   createRestaurant: (req, res) => {
-    res.render('admin/create')
+    Category.findAll({ raw: true, nest: true })
+      .then(categories => res.render('admin/create', { categories }))
   },
 
   postRestaurant: (req, res) => {
@@ -33,7 +34,8 @@ const adminController = {
           address: req.body.address,
           opening_hours: req.body.opening_hours,
           description: req.body.description,
-          image: file ? img.data.link : null
+          image: file ? img.data.link : null,
+          CategoryId: req.body.categoryId
         }).then(() => {
           req.flash('success_messages', 'restaurant was successfully created')
           res.redirect('/admin/restaurants')
@@ -46,7 +48,8 @@ const adminController = {
         address: req.body.address,
         opening_hours: req.body.opening_hours,
         description: req.body.description,
-        image: null
+        image: null,
+        CategoryId: req.body.categoryId
       }).then(() => {
         req.flash('success_messages', 'restaurant was successfully created')
         res.redirect('/admin/restaurants')
@@ -60,8 +63,11 @@ const adminController = {
   },
 
   editRestaurant: (req, res) => {
-    return Restaurant.findByPk(req.params.id, { raw: true })
-      .then(restaurant => res.render('admin/create', { restaurant }))
+    return Category.findAll({ raw: true, nest: true })
+      .then(categories => {
+        Restaurant.findByPk(req.params.id, { raw: true })
+          .then(restaurant => res.render('admin/create', { restaurant, categories }))
+      })
   },
 
   putRestaurant: (req, res) => {
@@ -82,7 +88,8 @@ const adminController = {
               address: req.body.address,
               opening_hours: req.body.opening_hours,
               description: req.body.description,
-              image: file ? img.data.link : restaurant.image
+              image: file ? img.data.link : restaurant.image,
+              CategoryId: req.body.categoryId
             })
           })
           .then(() => {
@@ -99,7 +106,8 @@ const adminController = {
             address: req.body.address,
             opening_hours: req.body.opening_hours,
             description: req.body.description,
-            image: restaurant.image
+            image: restaurant.image,
+            CategoryId: req.body.categoryId
           })
         })
         .then(() => {
