@@ -1,8 +1,8 @@
 {{#if restaurant}}
-  <form action="/admin/restaurants/{{restaurant.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
-{{else}}
+<form action="/admin/restaurants/{{restaurant.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
+  {{else}}
   <form action="/admin/restaurants" method="POST" enctype="multipart/form-data">
-{{/if}}
+    {{/if}}
     <div class="form-group">
       <label for="name">Name</label>
       <input type="text" class="form-control" name="name" id="name" placeholder="Enter name"
@@ -13,7 +13,8 @@
       <label for="categoryId">Category</label>
       <select class="form-control" id="categoryId" name="categoryId">
         {{#each categories}}
-        <option value="{{this.id}}">{{this.name}}</option>
+        <option value="{{this.id}}" {{#ifCond this.id ../restaurant.CategoryId}}selected{{/ifCond}}>{{this.name}}
+        </option>
         {{/each}}
       </select>
     </div>
