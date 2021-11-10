@@ -6,7 +6,7 @@ module.exports = {
       id: index * 10 + 1,
       text: item,
       UserId: 5,
-      RestaurantId: Math.floor(Math.random() * 50) + 1,
+      RestaurantId: Math.floor(Math.random() * 50) * 5,
       createdAt: new Date(),
       updatedAt: new Date()
     })), {})
