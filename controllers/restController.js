@@ -39,7 +39,43 @@ const restController = {
 
   getRestaurant: (req, res) => {
     return Restaurant.findByPk(req.params.id, { include: [Category, { model: Comment, include: [User] }] })
-      .then(restaurant => res.render('restaurant', { restaurant: restaurant.toJSON() }))
+      .then(restaurant => {
+        const newCounts = restaurant.viewCounts + 1
+        restaurant.update({ viewCounts: newCounts })
+        res.render('restaurant', { restaurant: restaurant.toJSON() })
+      })
+  },
+
+  getFeeds: (req, res) => {
+    return Promise.all([
+      Restaurant.findAll({
+        raw: true,
+        nest: true,
+        include: [Category],
+        order: [['createdAt', 'DESC']],
+        limit: 10
+      }),
+      Comment.findAll({
+        raw: true,
+        nest: true,
+        include: [User, Restaurant],
+        order: [['createdAt', 'DESC']],
+        limit: 10
+      })
+    ])
+      .then(([restaurants, comments]) => {
+        return res.render('feeds', { restaurants, comments })
+      })
+  },
+
+  getDashBoard: (req, res) => {
+    return Restaurant.findByPk(req.params.id, { raw: true, nest: true, include: [Category] })
+      .then(restaurant => {
+        Comment.findAndCountAll({ raw: true, nest: true, where: { RestaurantId: req.params.id } })
+          .then(comments => {
+            res.render('dashboard', { restaurant, comments })
+          })
+      })
   }
 }
 
