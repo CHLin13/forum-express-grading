@@ -59,7 +59,7 @@ const userController = {
       .then(comment => {
         return User.findByPk(req.params.id)
           .then(user => {
-            const edit = req.user.id === user.id
+            const edit = helpers.getUser(req).id === user.id
             res.render('profile', { user: user.toJSON(), comment, edit })
           })
       })
