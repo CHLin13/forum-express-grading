@@ -7,7 +7,9 @@
       <div class="ml-5 mt-3">
         <h3>{{user.name}}</h3>
         <div class="my-3">{{user.email}}</div>
+        {{#if edit}}
         <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
+        {{/if}}
       </div>
     </div>
   </div>

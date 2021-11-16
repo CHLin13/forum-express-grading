@@ -6,6 +6,7 @@ const Comment = db.Comment
 const Restaurant = db.Restaurant
 const Favorite = db.Favorite
 const Like = db.Like
+const Followship = db.Followship
 
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
@@ -58,7 +59,8 @@ const userController = {
       .then(comment => {
         return User.findByPk(req.params.id)
           .then(user => {
-            res.render('profile', { user: user.toJSON(), comment })
+            const edit = req.user.id === user.id
+            res.render('profile', { user: user.toJSON(), comment, edit })
           })
       })
   },
@@ -190,6 +192,24 @@ const userController = {
         users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
         return res.render('topUser', { users })
       })
+  },
+
+  addFollowing: (req, res) => {
+    return Followship.create({
+      followerId: req.user.id,
+      followingId: req.params.userId
+    })
+      .then(() => res.redirect('back'))
+  },
+
+  removeFollowing: (req, res) => {
+    return Followship.destroy({
+      where: {
+        followerId: req.user.id,
+        followingId: req.params.userId
+      }
+    })
+      .then(() => res.redirect('back'))
   }
 }
 
