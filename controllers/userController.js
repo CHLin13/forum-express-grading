@@ -55,12 +55,36 @@ const userController = {
   },
 
   getUser: (req, res) => {
-    return Comment.findAll({ raw: true, nest: true, where: { UserId: req.params.id }, include: [Restaurant] })
-      .then(comment => {
-        return User.findByPk(req.params.id)
-          .then(user => {
-            const edit = helpers.getUser(req).id === user.id
-            res.render('profile', { user: user.toJSON(), comment, edit })
+    return User.findByPk(req.params.id, {
+      include: [
+        Comment,
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' }
+      ]
+    })
+      .then(user => {
+        const edit = helpers.getUser(req).id === user.id
+        const isFollowed = helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
+        const commentedRestaurantId = [...new Set(user.Comments.map(c => c.RestaurantId))]
+        const favoritedRestaurantId = user.FavoritedRestaurants.map(FR => FR.id)
+        const followingId = user.Followings.map(following => following.id)
+        const followerId = user.Followers.map(follower => follower.id)
+        user = {
+          ...user.dataValues,
+          CommentRestaurantCount: commentedRestaurantId.length,
+          FavoritedRestaurantCount: user.FavoritedRestaurants.length,
+          FollowingCount: user.Followings.length,
+          FollowerCount: user.Followers.length,
+        }
+        Promise.all([
+          Restaurant.findAll({ raw: true, nest: true, where: { id: commentedRestaurantId } }),
+          Restaurant.findAll({ raw: true, nest: true, where: { id: favoritedRestaurantId } }),
+          User.findAll({ raw: true, nest: true, where: { id: followingId } }),
+          User.findAll({ raw: true, nest: true, where: { id: followerId } })
+        ])
+          .then(([commentRestaurants, favoritedRestaurants, followings, followers]) => {
+            return res.render('profile', { user, commentRestaurants, favoritedRestaurants, followings, followers, edit, isFollowed })
           })
       })
   },
@@ -187,7 +211,8 @@ const userController = {
         users = users.map(user => ({
           ...user.dataValues,
           FollowerCount: user.Followers.length,
-          isFollowed: req.user.Followings.map(d => d.id).includes(user.id)
+          isFollowed: req.user.Followings.map(d => d.id).includes(user.id),
+          user: req.user.id === user.id
         }))
         users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
         return res.render('topUser', { users })

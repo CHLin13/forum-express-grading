@@ -19,12 +19,13 @@
       <ul class="navbar-nav mr-auto">
       </ul>
       <div>
-        {{#if user.isAdmin}}
+        {{#if localUser.isAdmin}}
         <a href="/admin" style="color: white;margin-right: 10px;">Admin 後台</a>
         {{/if}}
-        {{#if user}}
-        <span style="color: white;margin-right: 10px;">Hi, {{user.email}}</span>
-        <a href="/users/{{user.id}}" style="color: white;margin-right: 10px;">Profile</a>
+
+        {{#if localUser}}
+        <span style="color: white;margin-right: 10px;">Hi, {{localUser.email}}</span>
+        <a href="/users/{{localUser.id}}" style="color: white;margin-right: 10px;">Profile</a>
         <a href="/logout"><button class="btn btn-outline-success my-2 my-sm-0">LogOut</button></a>
         {{/if}}
       </div>
