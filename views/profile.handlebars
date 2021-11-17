@@ -38,9 +38,9 @@
           <strong>{{user.FollowingCount}}</strong> Followings(追蹤者)
         </div>
         <div class="card-body">
-          {{#each followings}}
-          <a href="/users/{{this.id}}" style="display: inline-block;">
-            <img class="img" src="{{this.image}}" style="width: 100px; height:100px">
+          {{#each user.Followings}}
+          <a href="/users/{{this.dataValues.id}}" style="display: inline-block;">
+            <img class="img" src="{{this.dataValues.image}}" style="width: 100px; height:100px">
           </a>
           {{/each}}
         </div>
@@ -66,9 +66,9 @@
           <strong>{{user.FollowerCount}}</strong> Followers (追蹤者)
         </div>
         <div class="card-body">
-          {{#each followers}}
-          <a href="/users/{{this.id}}" style="display: inline-block;">
-            <img class="img" src="{{this.image}}" style="width: 100px; height:100px">
+          {{#each user.Followers}}
+          <a href="/users/{{this.dataValues.id}}" style="display: inline-block;">
+            <img class="img" src="{{this.dataValues.image}}" style="width: 100px; height:100px">
           </a>
           {{/each}}
         </div>
@@ -80,9 +80,9 @@
           <strong>{{user.FavoritedRestaurantCount}}</strong> 收藏的餐廳
         </div>
         <div class="card-body">
-          {{#each favoritedRestaurants}}
-          <a href="/restaurants/{{this.id}}" style="display: inline-block;">
-            <img class="img" src="{{this.image}}" style="width: 100px; height:100px">
+          {{#each user.FavoritedRestaurants}}
+          <a href="/restaurants/{{this.dataValues.id}}" style="display: inline-block;">
+            <img class="img" src="{{this.dataValues.image}}" style="width: 100px; height:100px">
           </a>
           {{/each}}
         </div>

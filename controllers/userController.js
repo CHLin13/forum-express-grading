@@ -67,9 +67,6 @@ const userController = {
         const edit = helpers.getUser(req).id === user.id
         const isFollowed = helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
         const commentedRestaurantId = [...new Set(user.Comments.map(c => c.RestaurantId))]
-        const favoritedRestaurantId = user.FavoritedRestaurants.map(FR => FR.id)
-        const followingId = user.Followings.map(following => following.id)
-        const followerId = user.Followers.map(follower => follower.id)
         user = {
           ...user.dataValues,
           CommentRestaurantCount: commentedRestaurantId.length,
@@ -77,14 +74,9 @@ const userController = {
           FollowingCount: user.Followings.length,
           FollowerCount: user.Followers.length,
         }
-        Promise.all([
-          Restaurant.findAll({ raw: true, nest: true, where: { id: commentedRestaurantId } }),
-          Restaurant.findAll({ raw: true, nest: true, where: { id: favoritedRestaurantId } }),
-          User.findAll({ raw: true, nest: true, where: { id: followingId } }),
-          User.findAll({ raw: true, nest: true, where: { id: followerId } })
-        ])
-          .then(([commentRestaurants, favoritedRestaurants, followings, followers]) => {
-            return res.render('profile', { user, commentRestaurants, favoritedRestaurants, followings, followers, edit, isFollowed })
+        Restaurant.findAll({ raw: true, nest: true, where: { id: commentedRestaurantId } })
+          .then(commentRestaurants => {
+            return res.render('profile', { user, commentRestaurants, edit, isFollowed })
           })
       })
   },
