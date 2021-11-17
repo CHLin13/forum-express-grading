@@ -93,7 +93,9 @@ const restController = {
     return Restaurant.findAll({
       include: [
         { model: User, as: 'FavoritedUsers' }
-      ]
+      ],
+      order: [['favoriteCounts', 'DESC']],
+      limit: 10
     })
       .then(restaurants => {
         restaurants = restaurants.map(r => ({
@@ -102,7 +104,6 @@ const restController = {
           favoritedCount: r.FavoritedUsers.length,
           isFavorite: helpers.getUser(req).FavoritedRestaurants.map(d => d.id).includes(r.id)
         }))
-        restaurants = restaurants.sort((a, b) => b.favoritedCount - a.favoritedCount).slice(0, 10)
         return res.render('topRestaurant', { restaurants })
       })
   }
